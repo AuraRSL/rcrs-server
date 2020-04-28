@@ -55,6 +55,14 @@ public class DamageType {
         return damage;
     }
 
+    public double progressInRefuge() {
+        if (damage <= 0) {
+            return damage;
+        }
+        double n = noise.nextValue();
+        damage = damage - (k * damage * damage) - l - 6*n;
+        return damage;
+    }
     /**
      Get the current damage.
      @return The current damage.

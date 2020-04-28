@@ -52,6 +52,10 @@ public final class StandardPropertyFactory extends AbstractPropertyFactory<Stand
         case IMPORTANCE:
         case TRAVEL_DISTANCE:
         case REPAIR_COST:
+        case CAPACITY:
+        case BEDCAPACITY:
+        case REFILLCAPACITY:
+        case OCCUPIEDBEDS:
             return new IntProperty(urn);
         case APEXES:
         case POSITION_HISTORY:

@@ -77,6 +77,7 @@ public class BuildingInfo {
         GMLBuilding b = gml.createBuildingFromNodes(apexes);
         b.setFloors(building.getFloors());
         b.setCode(building.getCode());
+        //b.setCapacity(building.get);
         // Create an entrance
         //        Logger.debug("Creating entrance for " + building);
         if (building.getEntrances().length == 0) {

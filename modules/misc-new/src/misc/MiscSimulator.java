@@ -141,6 +141,7 @@ public class MiscSimulator extends StandardSimulator {
                             h.setBuriedness(buriedness);
                             changes.addChange(h, h.getBuriednessProperty());
                             Logger.debug("Changed buriedness: increase by " + increase + " to " + buriedness);
+
                         }
                     }
                 }
@@ -362,11 +363,15 @@ public class MiscSimulator extends StandardSimulator {
         // All checks passed
         target.setPosition(ambulance.getPosition());
         changes.addChange(target, target.getPositionProperty());
+        //Entity ent =  model.getEntity(ambulance.getPosition());
+        //if(ent instanceof  Refuge)
+        //    ((Refuge)ent).setCapacity((((Refuge)ent).getCapacity()) - 1);
         Logger.debug("Unload: " + unload);
         Logger.debug("Ambulance " + agentID + " unloaded " + target.getID() + " at " + ambulance.getPosition());
     }
 
     private void updateHealth() {
+        Logger.warn("update health function +++++++++++++++++++++++++++++++++++++++++++");
         for (Entity e : model.getEntitiesOfType(StandardEntityURN.CIVILIAN,
                                                 StandardEntityURN.FIRE_BRIGADE,
                                                 StandardEntityURN.POLICE_FORCE,

@@ -153,6 +153,7 @@ public class GMLMap implements maps.Map {
         b.setFloors(1);
         b.setCode(0);
         b.setImportance(1);
+        b.setCapacity(1);
         addBuilding(b);
         return b;
     }

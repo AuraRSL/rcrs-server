@@ -8,15 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 
+import rescuecore2.standard.entities.*;
 import rescuecore2.worldmodel.EntityID;
 import rescuecore2.worldmodel.ChangeSet;
 import rescuecore2.messages.Command;
-
-import rescuecore2.standard.entities.StandardEntity;
-import rescuecore2.standard.entities.StandardEntityURN;
-import rescuecore2.standard.entities.Building;
-import rescuecore2.standard.entities.Refuge;
-import rescuecore2.standard.entities.FireBrigade;
 
 import org.apache.log4j.Logger;
 
@@ -32,6 +27,7 @@ public class SampleFireBrigade extends AbstractSampleAgent<FireBrigade> {
     private int maxWater;
     private int maxDistance;
     private int maxPower;
+
 
     @Override
     public String toString() {
@@ -59,13 +55,29 @@ public class SampleFireBrigade extends AbstractSampleAgent<FireBrigade> {
         }
         FireBrigade me = me();
         // Are we currently filling with water?
-        if (me.isWaterDefined() && me.getWater() < maxWater && location() instanceof Refuge) {
+        //if (me.isWaterDefined() && me.getWater() < maxWater && location() instanceof Refuge) {
+        if (location() instanceof Refuge) {
             LOG.info("Filling with water at " + location());
+            System.out.println("time = " + time + " Refuge capacity is (" + location() + ") = " + ((Refuge)location()).getBedCapacity() + " " + ((Refuge)location()).getOccupiedBeds() + " "
+            + ((Refuge)location()).getRefillCapacity());
+            System.out.println("------------------------------------------------");
+            int civCount = 0;
+            for(StandardEntity civ : model.getEntitiesOfType(StandardEntityURN.CIVILIAN))
+            {
+                //System.out.println("civilian damage = " + ((Human)civ).getDamage());
+                /*if(((Human)civ).getPosition().equals(getID()))
+                {
+                    civCount++;
+                }*/
+
+            }
+            System.out.println("Civ Count = " +  model.getEntitiesOfType(StandardEntityURN.CIVILIAN).size());
             sendRest(time);
             return;
         }
         // Are we out of water?
-        if (me.isWaterDefined() && me.getWater() == 0) {
+        //if (me.isWaterDefined() && me.getWater() == 0)
+         {
             // Head for a refuge
             List<EntityID> path = search.breadthFirstSearch(me().getPosition(), refugeIDs);
             if (path != null) {
@@ -73,13 +85,13 @@ public class SampleFireBrigade extends AbstractSampleAgent<FireBrigade> {
                 sendMove(time, path);
                 return;
             }
-            else {
+            /*else {
                 LOG.debug("Couldn't plan a path to a refuge.");
                 path = randomWalk();
                 LOG.info("Moving randomly");
                 sendMove(time, path);
                 return;
-            }
+            }*/
         }
         // Find all buildings that are on fire
         Collection<EntityID> all = getBurningBuildings();
@@ -87,6 +99,7 @@ public class SampleFireBrigade extends AbstractSampleAgent<FireBrigade> {
         for (EntityID next : all) {
             if (model.getDistance(getID(), next) <= maxDistance) {
                 LOG.info("Extinguishing " + next);
+                System.out.println("Building capacity is :" + ((Building)model.getEntity(next)).getCapacity());
                 sendExtinguish(time, next, maxPower);
                 sendSpeak(time, 1, ("Extinguishing " + next).getBytes());
                 return;

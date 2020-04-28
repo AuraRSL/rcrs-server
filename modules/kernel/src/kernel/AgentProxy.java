@@ -108,9 +108,4 @@ public class AgentProxy extends AbstractKernelComponent {
             }
         }
     }
-
-    @Override
-    public int hashCode() {
-        return entity.getID().hashCode();
-    }
 }

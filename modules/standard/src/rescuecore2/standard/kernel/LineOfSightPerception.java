@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.Map;
 import kernel.Perception;
 import kernel.AgentProxy;
 
+import rescuecore2.standard.entities.*;
 import rescuecore2.worldmodel.Entity;
 import rescuecore2.worldmodel.EntityID;
 import rescuecore2.worldmodel.WorldModel;
@@ -37,17 +37,6 @@ import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import rescuecore2.standard.entities.StandardWorldModel;
-import rescuecore2.standard.entities.StandardEntity;
-import rescuecore2.standard.entities.Road;
-import rescuecore2.standard.entities.Area;
-import rescuecore2.standard.entities.Edge;
-import rescuecore2.standard.entities.Blockade;
-import rescuecore2.standard.entities.Building;
-import rescuecore2.standard.entities.Human;
-import rescuecore2.standard.entities.AmbulanceTeam;
-import rescuecore2.standard.entities.FireBrigade;
-import rescuecore2.standard.entities.StandardEntityURN;
 import rescuecore2.standard.view.StandardWorldModelViewer;
 import rescuecore2.standard.view.StandardViewLayer;
 import rescuecore2.standard.view.BuildingLayer;
@@ -203,6 +192,11 @@ public class LineOfSightPerception implements Perception, GUIComponent {
         result.addChange(building, building.getTemperatureProperty());
         result.addChange(building, building.getFierynessProperty());
         result.addChange(building, building.getBrokennessProperty());
+        result.addChange(building, building.getCapacityProperty());
+        if(building instanceof Refuge)
+        {
+            result.addChange(building, ((Refuge)building).getOccupiedBedsProperty());
+        }
     }
 
     private void addAreaProperties(Area area, ChangeSet result) {
@@ -328,7 +322,7 @@ public class LineOfSightPerception implements Perception, GUIComponent {
     }
 
     private Collection<LineInfo> getAllLines(Collection<StandardEntity> entities) {
-        Collection<LineInfo> result = new LinkedList<LineInfo>();
+        Collection<LineInfo> result = new HashSet<LineInfo>();
         for (StandardEntity next : entities) {
             if (next instanceof Building) {
                 for (Edge edge : ((Building)next).getEdges()) {

@@ -86,9 +86,4 @@ public class TrafficBlockade {
     public boolean contains(double x, double y) {
         return blockade.getShape().contains(x, y);
     }
-
-    @Override
-    public int hashCode() {
-        return blockade.getID().hashCode();
-    }
 }

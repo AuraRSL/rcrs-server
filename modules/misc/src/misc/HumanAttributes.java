@@ -145,6 +145,14 @@ public class HumanAttributes {
         damageBury.progress();
     }
 
+    public void progressDamageInRefuge()
+    {
+        //int damage = getTotalDamage();
+        damageCollapse.progressInRefuge();
+        damageFire.progressInRefuge();
+        damageBury.progressInRefuge();
+    }
+
     /**
      Clear all damage.
      */

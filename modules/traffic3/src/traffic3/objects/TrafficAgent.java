@@ -13,10 +13,7 @@ import rescuecore2.misc.geometry.GeometryTools2D;
 import rescuecore2.misc.geometry.Line2D;
 import rescuecore2.misc.geometry.Point2D;
 import rescuecore2.misc.geometry.Vector2D;
-import rescuecore2.standard.entities.Building;
-import rescuecore2.standard.entities.Civilian;
-import rescuecore2.standard.entities.Human;
-import rescuecore2.standard.entities.Road;
+import rescuecore2.standard.entities.*;
 import traffic3.manager.TrafficManager;
 import traffic3.simulator.PathElement;
 import traffic3.simulator.TrafficConstants;
@@ -550,7 +547,6 @@ public class TrafficAgent {
 	 */
 	public void endTimestep() {
 		handleOutOfActionCivilianMoves();
-
 	}
 
 	private void handleOutOfActionCivilianMoves() {
@@ -1155,10 +1151,5 @@ public class TrafficAgent {
 		sb.append(" final destination: ").append(finalDestination).append(";");
 		sb.append("]");
 		return sb.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		return human.getID().hashCode();
 	}
 }

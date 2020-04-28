@@ -53,6 +53,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.apache.log4j.Logger;
+import rescuecore2.config.Config;
 
 /**
    A component for editing scenarios.
@@ -100,6 +101,7 @@ public class ScenarioEditor extends JPanel {
     private FilledShapeDecorator hydrantDecorator = new FilledShapeDecorator(null, HYDRANT_COLOUR, null);
 
     private static final Logger LOG = Logger.getLogger(ScenarioEditor.class);
+    private  static Config config;
 
     /**
        Construct a new ScenarioEditor.
@@ -173,6 +175,7 @@ public class ScenarioEditor extends JPanel {
        @param args Command line arguments.
     */
     public static void main(String[] args) {
+        config = new Config();
         final JFrame frame = new JFrame("Scenario Editor");
         JMenuBar menuBar = new JMenuBar();
         final ScenarioEditor editor = new ScenarioEditor(menuBar);
@@ -269,7 +272,7 @@ public class ScenarioEditor extends JPanel {
             SAXReader saxReader = new SAXReader();
             r = new FileReader(f);
             Document doc = saxReader.read(r);
-            GisScenario newScenario = new GisScenario(doc);
+            GisScenario newScenario = new GisScenario(doc, config);
             setScenario(newMap, newScenario);
             baseDir = dir;
             saveFile = f;
@@ -737,6 +740,8 @@ public class ScenarioEditor extends JPanel {
             centreOverlay.setBuildingDecorator(ambulanceCentreDecorator, map.getBuilding(next));
         }
         for (int next : scenario.getRefuges()) {
+            map.getBuilding(next).setBedCapacity(scenario.getRefugeBedCapacity().get(next));
+            map.getBuilding(next).setRefillCapacity(scenario.getRefugeRefillCapacity().get(next));
             centreOverlay.setBuildingDecorator(refugeDecorator, map.getBuilding(next));
         }
         for (int next : scenario.getGasStations()) {

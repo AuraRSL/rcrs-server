@@ -200,6 +200,13 @@ public class TrafficSimulator extends StandardSimulator implements GUIComponent 
 				if (h instanceof Civilian && h.isPositionDefined() && (model.getEntity(h.getPosition()) instanceof Refuge)) {
 					Logger.debug("Agent " + h + " is in a refuge");
 					manager.getTrafficAgent(h).setMobile(false);
+
+					//--------added by Farshid -------------
+					/*if(h.isDamageDefined() && h.getDamage() <= 0)
+					{
+						int capacity = ((Refuge)model.getEntity(h.getPosition())).getOccupiedBeds();
+						((Refuge)model.getEntity(h.getPosition())).setOccupiedBeds(capacity-1);
+					}*/
 				}
 			}
 		}
@@ -208,6 +215,7 @@ public class TrafficSimulator extends StandardSimulator implements GUIComponent 
 			// Update position and positionHistory for agents that were not
 			// loaded or unloaded
 			Human human = agent.getHuman();
+
 			if (!agent.isMobile()) {
 				human.undefinePositionHistory();
 				human.setTravelDistance(0);
@@ -238,7 +246,20 @@ public class TrafficSimulator extends StandardSimulator implements GUIComponent 
 			changes.addChange(human, human.getYProperty());
 			changes.addChange(human, human.getPositionHistoryProperty());
 			changes.addChange(human, human.getTravelDistanceProperty());
+			//----by farshid -----------
+			if(human instanceof Civilian) {
+				Entity pos = human.getPosition(model);
+				if(pos instanceof Refuge && human.getDamage() > 0 )
+				{
+					/*if(( (Refuge)pos).getOccupiedBeds() < ( (Refuge)pos).getBedCapacity() ) {
+						((Refuge) pos).setOccupiedBeds(((Refuge) pos).getOccupiedBeds() + 1);
+						changes.addChange(pos, ((Refuge) pos).getOccupiedBedsProperty());
+					}*/
+					Logger.warn("Civilian went to Refuge with Damage = " + human.getDamage());
+				}
+			}
 		}
+
 		long end = System.currentTimeMillis();
 		Logger.info("Timestep " + c.getTime() + " took " + (end - start) + " ms");
 	}
@@ -832,6 +853,20 @@ public class TrafficSimulator extends StandardSimulator implements GUIComponent 
 		manager.getTrafficAgent(at).setMobile(false);
 		manager.getTrafficAgent(target).setMobile(false);
 		Logger.debug(at + " unloaded " + target);
+
+		//----- by Farshid----------
+		/*Entity pos = model.getEntity(at.getPosition());
+		if(pos instanceof Refuge && target.getDamage() > 0)
+		{
+			if(( (Refuge)pos).getOccupiedBeds() < ( (Refuge)pos).getBedCapacity() ) {
+				((Refuge) pos).setOccupiedBeds(((Refuge) pos).getOccupiedBeds() + 1);
+				changes.addChange(pos, ((Refuge) pos).getOccupiedBedsProperty());
+			}
+			else {
+				//((Refuge) pos).getWaitingList().add(target);
+			}
+		}*/
+
 		return target;
 	}
 

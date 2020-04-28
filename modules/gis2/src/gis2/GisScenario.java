@@ -1,18 +1,9 @@
 package gis2;
 
-import org.dom4j.DocumentHelper;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
+import org.dom4j.*;
 import org.apache.log4j.Logger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 import rescuecore2.worldmodel.EntityID;
 import rescuecore2.worldmodel.Entity;
@@ -36,6 +27,8 @@ import rescuecore2.standard.entities.FireStation;
 import rescuecore2.standard.entities.PoliceOffice;
 import rescuecore2.standard.entities.AmbulanceCentre;
 import rescuecore2.standard.entities.Human;
+
+import javax.swing.text.AttributeSet;
 
 /**
  * This class knows how to read scenario files and apply them to
@@ -89,6 +82,11 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	private static final QName AFTERSHOCK_QNAME = DocumentHelper.createQName(
 			"aftershock", SCENARIO_NAMESPACE);/* Aftershock requirement:2013 */
 
+	private static final QName BEDCAPACITY_QNAME = DocumentHelper.createQName(
+			"bedCapacity", SCENARIO_NAMESPACE);/* Refuge bed capacity:2020 */
+	private static final QName REFILLCAPACITY_QNAME = DocumentHelper.createQName(
+			"refillCapacity", SCENARIO_NAMESPACE);/* Refuge refill capacity:2020 */
+
 	private Set<Integer> refuges;
 	private Set<Integer> hydrants;
 	private Set<Integer> gasStations;
@@ -101,6 +99,10 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	private Collection<Integer> fsLocations;
 	private Collection<Integer> acLocations;
 	private Collection<Integer> poLocations;
+
+	/* Refuge Capacity requirements: 2020 */
+	private HashMap<Integer, Integer> refugeBedCapacity;
+	private HashMap<Integer, Integer> refugeRefillCapacity;
 
 	private static final Logger LOG = Logger.getLogger(GisScenario.class);
 
@@ -121,6 +123,9 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 		acLocations = new ArrayList<Integer>();
 		/* Aftershock requirement:2013 */
 		aftershocks = new HashMap<Integer, Float>();
+		/* Refuge Capacity requirements: 2020 */
+		refugeBedCapacity = new HashMap<Integer, Integer>();
+		refugeRefillCapacity = new HashMap<Integer, Integer>();
 	}
 
 	/**
@@ -131,9 +136,9 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	 * @throws ScenarioException
 	 *             If the scenario is invalid.
 	 */
-	public GisScenario(Document doc) throws ScenarioException {
+	public GisScenario(Document doc, Config config) throws ScenarioException {
 		this();
-		read(doc);
+		read(doc, config);
 	}
 
 	/**
@@ -144,7 +149,7 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	 * @throws ScenarioException
 	 *             If the scenario is invalid.
 	 */
-	public void read(Document doc) throws ScenarioException {
+	public void read(Document doc, Config config) throws ScenarioException {
 		hydrants.clear();
 		gasStations.clear();
 		refuges.clear();
@@ -156,6 +161,9 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 		fsLocations.clear();
 		poLocations.clear();
 		acLocations.clear();
+		refugeBedCapacity.clear();
+		refugeRefillCapacity.clear();
+
 		Element root = doc.getRootElement();
 		if (!root.getQName().equals(SCENARIO_QNAME)) {
 			throw new ScenarioException(
@@ -165,6 +173,13 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 		for (Object next : root.elements(REFUGE_QNAME)) {
 			Element e = (Element) next;
 			refuges.add(Integer.parseInt(e.attributeValue(LOCATION_QNAME)));
+			/* capacity requirements:2020 */
+			int default_bedCapacity =  config.getIntValue("gis.map.refuge.default-bedCapacity", 1000);
+			int default_refillCapacity =  config.getIntValue("gis.map.refuge.default-refillCapacity", 100);
+			int bedCapacity = e.attributeValue(BEDCAPACITY_QNAME) != null ? Integer.parseInt(e.attributeValue(BEDCAPACITY_QNAME)) : default_bedCapacity;
+			int refillCapacity = e.attributeValue(REFILLCAPACITY_QNAME) != null ? Integer.parseInt(e.attributeValue(REFILLCAPACITY_QNAME)) : default_refillCapacity;
+			refugeBedCapacity.put(Integer.parseInt(e.attributeValue(LOCATION_QNAME)),bedCapacity);
+			refugeRefillCapacity.put(Integer.parseInt(e.attributeValue(LOCATION_QNAME)),refillCapacity);
 		}
 		for (Object next : root.elements(HYDRANT_QNAME)) {
 			Element e = (Element) next;
@@ -227,8 +242,11 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 		Element root = DocumentHelper.createElement(SCENARIO_QNAME);
 		doc.setRootElement(root);
 		for (int next : refuges) {
-			root.addElement(REFUGE_QNAME).addAttribute(LOCATION_QNAME,
-					String.valueOf(next));
+
+			Element el = root.addElement(REFUGE_QNAME);
+			el.addAttribute(LOCATION_QNAME,String.valueOf(next));
+			el.addAttribute(BEDCAPACITY_QNAME, String.valueOf(refugeBedCapacity.get(next)));
+			el.addAttribute(REFILLCAPACITY_QNAME, String.valueOf(refugeRefillCapacity.get(next)));
 		}
 
 		for (int next : fires) {
@@ -295,6 +313,16 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 						+ " does not exist");
 			}
 			Refuge r = new Refuge(b);
+			if(refugeBedCapacity.containsKey(next))
+				r.setBedCapacity(refugeBedCapacity.get(next));
+			else
+				throw new ScenarioException("RefugeBedCapacity dose not contains " + next);
+			if(refugeRefillCapacity.containsKey(next))
+				r.setRefillCapacity(refugeRefillCapacity.get(next));
+			else
+				throw new ScenarioException("refugeRefillCapacity dose not contain " + next);
+
+			r.setOccupiedBeds(0);
 			model.removeEntity(b);
 			model.addEntity(r);
 			LOG.debug("Converted " + b + " into " + r);
@@ -441,6 +469,22 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	 */
 	public Set<Integer> getRefuges() {
 		return Collections.unmodifiableSet(refuges);
+	}
+	/**
+	 * Get the HashMap of refuge bed capacity.
+	 *
+	 * @return The HashMap of refuge bed capacity.
+	 */
+	public HashMap<Integer, Integer> getRefugeBedCapacity() {
+		return refugeBedCapacity;
+	}
+	/**
+	 * Get the HashMap of refuge refill capacity.
+	 *
+	 * @return The HashMap of refuge refill capacity.
+	 */
+	public HashMap<Integer, Integer> getRefugeRefillCapacity() {
+		return refugeRefillCapacity;
 	}
 
 	/**
@@ -652,6 +696,11 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	public void addRefuge(int location) {
 		refuges.add(location);
 	}
+	public void addRefuge(int location, int bedCapacity, int refillCapacity) {
+		refuges.add(location);
+		refugeBedCapacity.put(location, bedCapacity);
+		refugeRefillCapacity.put(location, refillCapacity);
+	}
 
 	/**
 	 * Remove a refuge.
@@ -661,6 +710,8 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 	 */
 	public void removeRefuge(int location) {
 		refuges.remove(location);
+		refugeRefillCapacity.remove(location);
+		refugeBedCapacity.remove(location);
 	}
 
 	/**

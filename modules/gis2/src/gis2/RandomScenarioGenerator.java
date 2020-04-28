@@ -150,7 +150,7 @@ public class RandomScenarioGenerator {
             GisScenario s = generator.makeRandomScenario(map, new Random());
             Document doc = DocumentHelper.createDocument();
             s.write(doc);
-            XMLWriter writer = new XMLWriter(new FileOutputStream(new File(dir, "scenario.gml")), OutputFormat.createPrettyPrint());
+            XMLWriter writer = new XMLWriter(new FileOutputStream(new File(dir, "scenario.xml")), OutputFormat.createPrettyPrint());
             writer.write(doc);
             writer.flush();
             writer.close();
@@ -282,7 +282,8 @@ public class RandomScenarioGenerator {
 
     private void placeRefuges(Iterator<GMLBuilding> it, GisScenario result, int num) {
         for (int i = 0; i < num; ++i) {
-            result.addRefuge(it.next().getID());
+            //result.addRefuge(it.next().getID());
+            result.addRefuge(it.next().getID(), 100, 10);
         }
     }
 

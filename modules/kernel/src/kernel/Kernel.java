@@ -4,11 +4,9 @@ package kernel;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TreeSet;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.io.IOException;
 import java.io.File;
 
@@ -38,6 +36,7 @@ import rescuecore2.log.CommandsRecord;
 import rescuecore2.log.UpdatesRecord;
 import rescuecore2.log.LogException;
 import rescuecore2.log.Logger;
+import rescuecore2.standard.entities.Refuge;
 
 /**
    The Robocup Rescue kernel.
@@ -105,12 +104,7 @@ public class Kernel {
             this.commandCollector = collector;
             this.idGenerator = idGenerator;
             listeners = new HashSet<KernelListener>();
-            agents = new TreeSet<AgentProxy>(new Comparator<AgentProxy>() {
-                @Override
-                public int compare(AgentProxy o1, AgentProxy o2) {
-                    return Integer.compare(o1.hashCode(), o2.hashCode());
-                }
-            });
+            agents = new HashSet<AgentProxy>();
             sims = new HashSet<SimulatorProxy>();
             viewers = new HashSet<ViewerProxy>();
             time = 0;
@@ -323,7 +317,6 @@ public class Kernel {
             return isShutdown || termination.shouldStop(getState());
         }
     }
-
     /**
        Run a single timestep.
        @throws InterruptedException If this thread is interrupted during the timestep.

@@ -482,8 +482,4 @@ public class TrafficArea {
 
 	}
 
-	@Override
-	public int hashCode() {
-		return area.getID().hashCode();
-	}
 }

@@ -9,6 +9,9 @@ public class GMLBuilding extends GMLShape {
     private int floors;
     private int code;
     private int importance;
+    private int capacity;
+    private int bedCapacity;
+    private int refillCapacity;
 
     /**
        Construct a GMLBuilding.
@@ -41,6 +44,55 @@ public class GMLBuilding extends GMLShape {
     public String toString() {
         return "GMLBuilding " + getID();
     }
+
+    /**
+     Set the capacity of this building.
+     @param newCapacity The new capacity of the building.
+     */
+    public void setCapacity(int newCapacity) {
+        capacity = newCapacity;
+    }
+
+    /**
+     Get the capacity of this building.
+     @return The the capacity of building.
+     */
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
+     Set the bed capacity of this building.
+     @param newCapacity The new bed capacity of the building.
+     */
+    public void setBedCapacity(int newCapacity) {
+        bedCapacity = newCapacity;
+    }
+
+    /**
+     Get the bed capacity of this building.
+     @return The the bed capacity of building.
+     */
+    public int getBedCapacity() {
+        return bedCapacity;
+    }
+
+    /**
+     Set the refill capacity of this building.
+     @param newCapacity The new refill capacity of the building.
+     */
+    public void setRefillCapacity(int newCapacity) {
+        refillCapacity = newCapacity;
+    }
+
+    /**
+     Get the refill capacity of this building.
+     @return The the refill capacity of building.
+     */
+    public int getRefillCapacity() {
+        return refillCapacity;
+    }
+
 
     /**
        Set the number of floors in this building.
