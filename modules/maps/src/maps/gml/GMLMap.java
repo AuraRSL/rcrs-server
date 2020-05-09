@@ -32,7 +32,6 @@ public class GMLMap implements maps.Map {
     private Map<Integer, GMLNode> nodes;
     private Map<Integer, GMLEdge> edges;
     private Map<Integer, GMLBuilding> buildings;
-    private Map<Integer, GMLRefuge> refuges;
     private Map<Integer, GMLRoad> roads;
     private Map<Integer, GMLSpace> spaces;
     private Set<GMLShape> allShapes;
@@ -50,7 +49,6 @@ public class GMLMap implements maps.Map {
         nodes = new HashMap<Integer, GMLNode>();
         edges = new HashMap<Integer, GMLEdge>();
         buildings = new HashMap<Integer, GMLBuilding>();
-        refuges = new HashMap<Integer, GMLRefuge>();
         roads = new HashMap<Integer, GMLRoad>();
         spaces = new HashMap<Integer, GMLSpace>();
         allShapes = new HashSet<GMLShape>();
@@ -242,18 +240,6 @@ public class GMLMap implements maps.Map {
     }
 
     /**
-     Add a refuge. The refuge's edges will be added if required.
-     @param r The refuge to add.
-     */
-    public void addRefuge(GMLRefuge r) {
-        if (refuges.containsKey(r.getID())) {
-            return;
-        }
-        //addShape(r);
-        refuges.put(r.getID(), r);
-    }
-
-    /**
        Add a road. The road's edges will be added if required.
        @param r The road to add.
     */
@@ -293,9 +279,6 @@ public class GMLMap implements maps.Map {
         }
         else if (object instanceof GMLBuilding) {
             addBuilding((GMLBuilding)object);
-        }
-        else if (object instanceof GMLRefuge) {
-            addRefuge((GMLRefuge) object);
         }
         else if (object instanceof GMLSpace) {
             addSpace((GMLSpace)object);
@@ -378,17 +361,6 @@ public class GMLMap implements maps.Map {
     }
 
     /**
-     Remove a building.
-     @param r The refuge to remove.
-     */
-    public void removeRefuge(GMLRefuge r) {
-        if (buildings.containsKey(r.getID())) {
-            //removeShape(r); //---???????
-            refuges.remove(r.getID());
-        }
-    }
-
-    /**
        Remove a road.
        @param r The road to remove.
     */
@@ -426,9 +398,6 @@ public class GMLMap implements maps.Map {
         }
         else if (object instanceof GMLBuilding) {
             removeBuilding((GMLBuilding)object);
-        }
-        else if (object instanceof GMLRefuge) {
-            removeRefuge((GMLRefuge)object);
         }
         else if (object instanceof GMLSpace) {
             removeSpace((GMLSpace)object);
@@ -481,7 +450,6 @@ public class GMLMap implements maps.Map {
         edges.clear();
         roads.clear();
         buildings.clear();
-        refuges.clear();
         spaces.clear();
         allShapes.clear();
         allObjects.retainAll(nodes.values());
@@ -553,15 +521,6 @@ public class GMLMap implements maps.Map {
     }
 
     /**
-     Get a refuge by ID.
-     @param id The ID to look up.
-     @return The refuge with that ID or null if the ID is not found.
-     */
-    public GMLRefuge getRefuge(int id) {
-        return refuges.get(id);
-    }
-
-    /**
        Get a road by ID.
        @param id The ID to look up.
        @return The road with that ID or null if the ID is not found.
@@ -618,10 +577,6 @@ public class GMLMap implements maps.Map {
         if (b != null) {
             return b;
         }
-        GMLRefuge rf = getRefuge(id);
-        if (rf != null) {
-            return rf;
-        }
         GMLRoad r = getRoad(id);
         if (r != null) {
             return r;
@@ -655,14 +610,6 @@ public class GMLMap implements maps.Map {
     */
     public Set<GMLBuilding> getBuildings() {
         return new HashSet<GMLBuilding>(buildings.values());
-    }
-
-    /**
-     Get all refuges in the map.
-     @return All refuges.
-     */
-    public Set<GMLRefuge> getRefuges() {
-        return new HashSet<GMLRefuge>(refuges.values());
     }
 
     /**

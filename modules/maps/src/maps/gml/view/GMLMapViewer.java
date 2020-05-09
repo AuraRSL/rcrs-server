@@ -605,10 +605,7 @@ public class GMLMapViewer extends JComponent {
         for (GMLBuilding next : buildings) {
             BuildingDecorator d = getBuildingDecorator(next);
             if (d != null) {
-                d.decorate(next, (Graphics2D)g.create(), transform);
-                //int x = transform.xToScreen(next.getCentreX());
-                //int y = transform.yToScreen(next.getCentreY());
-                //g.drawString(String.valueOf(next.getCapacity()), x, y);
+                d.decorate(next, (Graphics2D)g.create(), transform);    
             }
         }
         for (GMLSpace next : spaces) {

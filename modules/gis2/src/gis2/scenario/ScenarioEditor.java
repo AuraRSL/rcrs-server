@@ -276,7 +276,7 @@ public class ScenarioEditor extends JPanel {
             SAXReader saxReader = new SAXReader();
             r = new FileReader(f);
             Document doc = saxReader.read(r);
-            GisScenario newScenario = new GisScenario(doc, config, newMap);
+            GisScenario newScenario = new GisScenario(doc, config);
             setScenario(newMap, newScenario);
             baseDir = dir;
             saveFile = f;
@@ -319,7 +319,6 @@ public class ScenarioEditor extends JPanel {
         updateOverlays();
     }
 
-    //---------------------farshid
     public void updateGMLRefuges()
     {
         for (int next : scenario.getRefuges()) {

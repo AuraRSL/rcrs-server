@@ -401,8 +401,6 @@ public class DecoratorOverlay implements Overlay {
             e.getValue().decorate(e.getKey(), (Graphics2D) g.create(),
                     transform);
 
-            //todo
-            //needs to be changed to find the refuges here
             if(e.getKey() instanceof GMLRefuge)
             {
                 int x = transform.xToScreen(e.getKey().getCentreX());

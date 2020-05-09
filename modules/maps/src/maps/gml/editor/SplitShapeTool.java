@@ -218,8 +218,6 @@ public class SplitShapeTool extends AbstractTool {
             GMLShape s1 = null;
             GMLShape s2 = null;
             if (shape instanceof GMLBuilding) {
-                Logger.warn("Shape is Building");
-                System.out.println("Shape is Building");
                 GMLBuilding b = (GMLBuilding) shape;
                 GMLBuilding b1 = editor.getMap().createBuildingFromNodes(nodes1);
                 GMLBuilding b2 = editor.getMap().createBuildingFromNodes(nodes2);
@@ -231,20 +229,8 @@ public class SplitShapeTool extends AbstractTool {
                 b2.setImportance(b.getImportance());
                 b1.setCapacity(b.getCapacity());
                 b2.setCapacity(b.getCapacity());
-
-                if (shape instanceof GMLRefuge) {
-                    ((GMLRefuge)b1).setBedCapacity(((GMLRefuge)b).getBedCapacity());
-                    ((GMLRefuge)b2).setBedCapacity(((GMLRefuge)b).getBedCapacity());
-
-                    ((GMLRefuge)b1).setRefillCapacity(((GMLRefuge)b).getRefillCapacity());
-                    ((GMLRefuge)b2).setRefillCapacity(((GMLRefuge)b).getRefillCapacity());
-                }
                 s1 = b1;
                 s2 = b2;
-            }
-            else if (shape instanceof GMLRefuge) {
-                Logger.warn("Shape is Refuge");
-                System.out.println("Shape is Refuge");
             }
             else if (shape instanceof GMLRoad) {
                 //GMLBuilding b = (GMLBuilding) shape;

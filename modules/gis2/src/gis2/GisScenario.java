@@ -145,11 +145,6 @@ public class GisScenario implements rescuecore2.scenario.Scenario,
 		read(doc, config);
 	}
 
-	public GisScenario(Document doc, Config config, GMLMap map) throws ScenarioException {
-		this();
-		read(doc, config);
-	}
-
 	/**
 	 * Read scenario data from an XML document.
 	 * 
