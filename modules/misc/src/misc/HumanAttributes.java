@@ -145,6 +145,17 @@ public class HumanAttributes {
         damageBury.progress();
     }
 
+    /*
+    By Farshid Faraji to implement Refuge Bed Capacity on May 2020 During Covid-19 :-)))
+     */
+    public void progressDamageInRefuge()
+    {
+        //int damage = getTotalDamage();
+        damageCollapse.progressInRefuge();
+        damageFire.progressInRefuge();
+        damageBury.progressInRefuge();
+    }
+
     /**
      Clear all damage.
      */

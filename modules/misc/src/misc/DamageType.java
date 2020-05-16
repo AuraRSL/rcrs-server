@@ -55,6 +55,17 @@ public class DamageType {
         return damage;
     }
 
+    /*
+    By Farshid Faraji to implement Refuge Bed Capacity on May 2020 During Covid-19 :-)))
+     */
+    public double progressInRefuge() {
+        if (damage <= 0) {
+            return damage;
+        }
+        double n = noise.nextValue();
+        damage = damage - (k * damage * damage) - l - (2*n);
+        return damage;
+    }
     /**
      Get the current damage.
      @return The current damage.
